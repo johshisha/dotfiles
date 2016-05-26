@@ -5,15 +5,16 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 autoload -Uz compinit
 compinit -u
 
+#補完で小文字大文字マッチ
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
 autoload -Uz colors
 colors
-
 
 export PYENV_ROOT=$HOME/.pyenv
 if [ -d "$PYENV_ROOT" ]; then
   export PATH=$PYENV_ROOT/bin:$PATH
   eval "$(pyenv init -)"
-  alias brew="env PATH=${PATH/\/Users\/${USER}\/\.pyenv\/shims:?/} brew"
 fi
 
 alias ls='ls'
@@ -25,64 +26,38 @@ alias mv='mv -i'
 alias rm='rm -i'
 alias mkdir='mkdir -p'
 
-# prompt
-PROMPT="${fg[green]}[%c]${reset_color} %# "
-RPROMPT="$(branch-status-check)"
+alias check='/home/dl-box/study/.package/check/check.sh'
+alias chmodsh='/home/dl-box/study/.package/chmod.sh'
+alias mfile='/home/dl-box/study/.package/do_matlab/do_matlab.sh'
 
-function branch-status-check {
-  local prefix branchname suffix
-  # .gitの中だから除外
-  if [[ "$PWD" =~ '/\.git(/.*)?$' ]]; then
-    return
-  fi
-  branchname=`get-branch-name`
-  # ブランチ名が無いので除外
-  if [[ -z $branchname ]]; then
-    return
-  fi
-  prefix=`get-branch-status` #色だけ返ってくる
-  suffix='%{'${reset_color}'%}'
-  # echo '['${prefix}${branchname}${suffix}']'
-  echo ${prefix}${branchname}${suffix}
+
+# VCSの情報を取得するzshの便利関数 vcs_infoを使う
+autoload -Uz vcs_info
+
+# 表示フォーマットの指定
+# %b ブランチ情報
+# %a アクション名(mergeなど)
+zstyle ':vcs_info:*' formats '[%b]'
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () {
+      psvar=()
+          LANG=en_US.UTF-8 vcs_info
+              [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
 }
 
-function get-branch-name {
-  # gitディレクトリじゃない場合のエラーは捨てます
-  echo `git rev-parse --abbrev-ref HEAD 2> /dev/null`
-}
+# バージョン管理されているディレクトリにいれば表示，そうでなければ非表示
+RPROMPT="%1(v|%F{green}%1v%f|)"
 
-function get-branch-status {
-  local res color
-  output=`git status --short 2> /dev/null`
-  if [ -z "$output" ]; then
-    res=':' # status Clean
-    color='%{'${fg[green]}'%}'
-  elif [[ $output =~ "[\n]?\?\? " ]]; then
-    res='?:' # Untracked
-    color='%{'${fg[yellow]}'%}'
-  elif [[ $output =~ "[\n]? M " ]]; then
-    res='M:' # Modified
-    color='%{'${fg[red]}'%}'
-  else
-    res='A:' # Added to commit
-    color='%{'${fg[cyan]}'%}'
-  fi
-  # echo ${color}${res}'%{'${reset_color}'%}'
-  echo ${color} # 色だけ返す
-}
+#prompt
+PROMPT="%{${fg[green]}%}[%c]%{${reset_color}%}"
 
-function prompt_char {
-  git branch >/dev/null 2>/dev/null && echo '±' && return
-  hg root >/dev/null 2>/dev/null && echo 'Hg' && return
-  echo '○'
-}
 
 function virtualenv_info {
   [ $VIRTUAL_ENV ] && echo '('`basename $VIRTUAL_ENV`') '
 }
 
-# autojump
-[[ -s `brew --prefix`/etc/autojump.sh ]] && . `brew --prefix`/etc/autojump.sh
+# 日本語ファイル名を表示可能にする
+setopt print_eight_bit
 
 # History
 HISTFILE=~/.zsh_history
@@ -93,6 +68,9 @@ setopt hist_ignore_space
 setopt hist_save_nodups
 setopt hist_reduce_blanks
 
+# 同時に起動したzshの間でヒストリを共有する
+setopt share_history
+
 # History Search
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
@@ -102,5 +80,30 @@ bindkey "^N" history-beginning-search-forward-end
 
 zstyle ':completion:*:default' menu select=1
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
+
+#autojump
+[[ -s /usr/share/autojump/autojump.sh ]] && source /usr/share/autojump/autojump.sh
+
+#---- path ----
+
+#cuda
+#export PATH=/usr/local/cuda/bin:$PATH
+#export DYLD_LIBRARY_PATH=/usr/local/cuda/lib:$DYLD_LIBRARY_PATH
+#export C_INCLUDE_PATH="/Developer/NVIDIA/CUDA-7.0/samples/common/inc"
+#export CPLUS_INCLUDE_PATH="/Developer/NVIDIA/CUDA-7.0/samples/common/inc"
+
+
+#VLFeat
+export PATH=/Developer/vlfeat-0.9.20/bin/maci64:$PATH
+export MANPATH=/Developer/vlfeat-0.9.20/src:$MANPATH
+
+
+
+#path
+export CAFFE_ROOT=~/study/.package/caffe/
+export PYTHONPATH=~/study/.package/caffe/python/:$PYTHONPATH
+
+export MATLAB_PATH=/usr/local/MATLAB/R2015a/bin/glnxa64/:$MATLAB_PATH
 
 

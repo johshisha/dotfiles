@@ -23,5 +23,7 @@ set noswapfile
 set encoding=utf-8
 set fileencoding=utf-8
 
+set clipboard=unnamed,autoselect,unnamedplus
+
 syntax enable
 
