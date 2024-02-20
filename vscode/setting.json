@@ -1,0 +1,87 @@
+{
+  "workbench.statusBar.visible": true,
+  "breadcrumbs.enabled": true,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.formatOnSaveMode": "file",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "vim.statusBarColorControl": false,
+  "workbench.colorTheme": "Visual Studio Dark",
+  "files.trimTrailingWhitespace": true,
+  "editor.tabSize": 2,
+  // Markdownの場合は空白トリミングは実施しない
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    }
+  },
+  "[makefile]": {
+    "editor.tabSize": 2
+  },
+  "[javascript]": {
+    "editor.tabSize": 2
+  },
+  "[javascript React]": {
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.tabSize": 2
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.formatOnType": true
+  },
+  "[ruby]": {
+    "editor.tabSize": 2
+  },
+  "[haml]": {
+    "editor.tabSize": 2
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  // Git Web Links
+  "gitweblinks.linkType": "hash",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "auto",
+  "go.useLanguageServer": true,
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust"
+  },
+  "dart.openDevTools": "flutter",
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code"
+  },
+  "files.insertFinalNewline": true,
+  "svg.preview.mode": "svg",
+  "[svg]": {
+    "editor.defaultFormatter": "jock.svg"
+  },
+  "go.toolsManagement.autoUpdate": true,
+  "cSpell.ignoreWords": [],
+  "redhat.telemetry.enabled": true,
+  "[xml]": {
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.formatOnSaveMode": "file"
+  },
+  "CodeGPT.query.language": "Japanese",
+  "git.openRepositoryInParentFolders": "never",
+  "editor.inlineSuggest.enabled": true,
+  "[sql]": {
+    "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  }
+}

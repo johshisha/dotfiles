@@ -1,6 +1,6 @@
 # 補完
 # for zsh-completions
-fpath=(/usr/local/share/zsh-completions $fpath) 
+fpath=(/usr/local/share/zsh-completions $fpath)
 # 補完機能を有効にする
 autoload -Uz compinit
 compinit -u
@@ -10,25 +10,6 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 autoload -Uz colors
 colors
-
-# pyenv and virtualenv
-export PYENV_ROOT=$HOME/.pyenv
-if [ -d "$PYENV_ROOT" ]; then
-  export PATH=$PYENV_ROOT/bin:$PATH
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
-
-function virtualenv_info {
-  [ $VIRTUAL_ENV ] && echo '('`basename $VIRTUAL_ENV`') '
-}
-
-# rbenv
-export RBENV_ROOT=$HOME/.rbenv
-if [ -d "$RBENV_ROOT" ]; then
-  export PATH=$RBENV_ROOT/bin:$PATH
-  eval "$(rbenv init -)"
-fi
 
 # alias
 alias ls='ls'
@@ -88,9 +69,47 @@ bindkey "^N" history-beginning-search-forward-end
 zstyle ':completion:*:default' menu select=1
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
-#---- path ----
+# gh
+eval "$(gh completion -s zsh)"
 
-# Golang
-export GOPATH=$HOME/go/third-party:$HOME/go/my-project
-export PATH=$HOME/go/third-party/bin:$PATH
+# -------------------------------------------------
+# プラグイン有効化
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# -------------------------------------------------
 
+# -------------------------------------------------
+# peco
+# ctrl + r で過去に実行したコマンドを選択できるようにする。
+function peco-select-history() {
+  if (($+zle_bracketed_paste)); then
+    print $zle_bracketed_paste[2]
+  fi
+  BUFFER=`history -n 1 | tail -r  | awk '!a[$0]++' | peco`
+  CURSOR=$#BUFFER
+  zle reset-prompt
+}
+zle -N peco-select-history
+bindkey '^r' peco-select-history
+
+if [[ -n $(echo ${^fpath}/chpwd_recent_dirs(N)) && -n $(echo ${^fpath}/cdr(N)) ]]; then
+    autoload -Uz chpwd_recent_dirs cdr add-zsh-hook
+    add-zsh-hook chpwd chpwd_recent_dirs
+    zstyle ':completion:*' recent-dirs-insert both
+    zstyle ':chpwd:*' recent-dirs-default true
+    zstyle ':chpwd:*' recent-dirs-max 1000
+fi
+
+# ctrl + f で過去に移動したことのあるディレクトリを選択できるようにする。
+function peco-cdr () {
+    local selected_dir="$(cdr -l | sed -E 's/^[0-9]+ *//' | peco --prompt="cdr >" --query "$LBUFFER")"
+    if [ -n "$selected_dir" ]; then
+        BUFFER="cd ${selected_dir}"
+        zle accept-line
+    fi
+}
+zle -N peco-cdr
+bindkey '^f' peco-cdr
+# -------------------------------------------------
+
+alias chrome="/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome"

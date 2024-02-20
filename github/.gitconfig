@@ -1,0 +1,10 @@
+[user]
+	name = johshisha
+	email = johshisha@gmail.com
+[core]
+	editor = vim -c \"set fenc=utf-8\"
+[alias]
+	st = status
+	df = diff
+	co = checkout
+  delete-merged-branch = "!f () { git checkout $1; git branch --merged|egrep -v '\\*|develop|main|master'|xargs git branch -d; };f"
